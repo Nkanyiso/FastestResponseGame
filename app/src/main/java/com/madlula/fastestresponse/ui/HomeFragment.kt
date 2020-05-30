@@ -6,12 +6,11 @@ import android.os.CountDownTimer
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast.LENGTH_LONG
-import android.widget.Toast.makeText
 import androidx.appcompat.app.AlertDialog
-import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
+import androidx.navigation.fragment.findNavController
 import com.madlula.fastestresponse.R
 import com.madlula.fastestresponse.databinding.FragmentHomeBinding
 import com.madlula.fastestresponse.viewModel.BaseViewModel
@@ -21,7 +20,7 @@ import com.madlula.fastestresponse.viewModel.Event
 /**
  * Home fragment.
  */
-class HomeFragment : DialogFragment() {
+class HomeFragment : Fragment() {
     private lateinit var binding: FragmentHomeBinding
 
     private lateinit var viewModel: BaseViewModel
@@ -81,13 +80,14 @@ class HomeFragment : DialogFragment() {
     }
 
     fun countDown() {
-        object : CountDownTimer(5000, 1000) {
+        object : CountDownTimer(3000, 1000) {
             override fun onTick(millisUntilFinished: Long) {
                 binding.txtCountDown.text = "" + millisUntilFinished / 1000
             }
 
             override fun onFinish() {
                 binding.txtCountDown.text = getString(R.string.str_done)
+                findNavController().navigate(R.id.action_homeFragment_to_gameFragment)
             }
         }.start()
 

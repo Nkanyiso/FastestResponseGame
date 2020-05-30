@@ -7,7 +7,7 @@
     <string name="btn_ok">Ok</string>
     <string name="str_done">done!</string>
     <array name="color_list">
-        <item >Red</item>
+        <item>Red</item>
         <item>Blue</item>
         <item>Green</item>
         <item>Pink</item>
