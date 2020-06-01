@@ -10,6 +10,32 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="@color/colorPrimary"
+            app:layout_constraintTop_toTopOf="parent"
+            >
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/txt_score"
+                    android:gravity="right"
+                    android:textColor="@color/white"
+                    android:layout_gravity="right|center_vertical"
+
+                    android:layout_marginRight="16dp"
+                    />
+
+                />
+            </FrameLayout>
+        </androidx.appcompat.widget.Toolbar>
         <ImageView
             android:id="@+id/arrow_left"
             android:layout_width="100dp"
@@ -49,7 +75,7 @@
             android:id="@+id/arrow_forward"
             android:layout_width="100dp"
             android:layout_height="100dp"
-            android:layout_marginBottom="200dp"
+            android:layout_marginBottom="150dp"
             android:src="@drawable/ic_arrow_forward_24dp"
             android:tint="@color/black"
             android:visibility="invisible"

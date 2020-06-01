@@ -6,6 +6,8 @@
     <string name="tittle_color_dialog">Choose one color for arrows</string>
     <string name="btn_ok">Ok</string>
     <string name="str_done">done!</string>
+    <string name="txt_game_begun">Game has Begun!</string>
+    <string name="txt_game_finished">Game is finished!</string>
     <array name="color_list">
         <item>Red</item>
         <item>Blue</item>
