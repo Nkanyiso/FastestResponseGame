@@ -1,4 +1,4 @@
-package com.madlula.fastestresponse.viewModel
+package com.madlula.fastestresponse.utilities
 
 import androidx.annotation.MainThread
 import androidx.lifecycle.LifecycleOwner

@@ -2,7 +2,6 @@ package com.madlula.fastestresponse.ui
 
 import android.content.DialogInterface
 import android.os.Bundle
-import android.os.CountDownTimer
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,22 +12,22 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.findNavController
 import com.madlula.fastestresponse.R
 import com.madlula.fastestresponse.databinding.FragmentHomeBinding
-import com.madlula.fastestresponse.viewModel.BaseViewModel
-import com.madlula.fastestresponse.viewModel.Event
+import com.madlula.fastestresponse.utilities.Event
+import com.madlula.fastestresponse.viewModel.HomeViewModel
 
 
 /**
- * Home fragment.
+ * Home fragment. Choose color for arrows and count down.
  */
 class HomeFragment : Fragment() {
     private lateinit var binding: FragmentHomeBinding
 
-    private lateinit var viewModel: BaseViewModel
+    private lateinit var viewModel: HomeViewModel
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
 
-        viewModel = ViewModelProviders.of(requireActivity()).get(BaseViewModel::class.java)
+        viewModel = ViewModelProviders.of(requireActivity()).get(HomeViewModel::class.java)
         binding = FragmentHomeBinding.inflate(layoutInflater)
         return binding.root
 
@@ -42,8 +41,11 @@ class HomeFragment : Fragment() {
                 proptUserPickeColor()
             }
         })
-        viewModel.choosenColor.observe(requireActivity(), Observer {
-            colorChoosen()
+        viewModel.isCountDownFinished().observe(requireActivity(), Observer {
+            finishedCountDown()
+        })
+        viewModel.getcountDown().observe(requireActivity(), Event.Observer {
+            updateCountDown(it)
         })
         viewModel.init()
 
@@ -66,31 +68,21 @@ class HomeFragment : Fragment() {
 
                         })
                 .setPositiveButton(getString(R.string.btn_ok), DialogInterface.OnClickListener({ dialog, color ->
-                    print("Choosen " + color.toString())
-                    viewModel.choosenColor.value = pickedColor
+                    viewModel.setChosenColor(pickedColor)
                     dialog.dismiss()
                 }))
         builder.show()
         builder.setCancelable(true)
     }
 
-    fun colorChoosen() {
-        countDown()
-
+    fun updateCountDown(millisUntilFinished: Long){
+        binding.txtCountDown.text = "" + millisUntilFinished / 1000
+    }
+    fun finishedCountDown(){
+        binding.txtCountDown.text = getString(R.string.str_done)
+        val action = HomeFragmentDirections.actionHomeFragmentToGameFragment(viewModel.chosenColor.value!!)
+        findNavController().navigate(action)
     }
 
-    fun countDown() {
-        object : CountDownTimer(3000, 1000) {
-            override fun onTick(millisUntilFinished: Long) {
-                binding.txtCountDown.text = "" + millisUntilFinished / 1000
-            }
-
-            override fun onFinish() {
-                binding.txtCountDown.text = getString(R.string.str_done)
-                findNavController().navigate(R.id.action_homeFragment_to_gameFragment)
-            }
-        }.start()
-
-    }
 
 }

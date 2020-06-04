@@ -11,11 +11,20 @@
         tools:layout="@layout/fragment_home" >
         <action
             android:id="@+id/action_homeFragment_to_gameFragment"
-            app:destination="@id/gameFragment" />
+            app:destination="@id/gameFragment"
+            />
     </fragment>
     <fragment
         android:id="@+id/gameFragment"
         android:name="com.madlula.fastestresponse.ui.GameFragment"
         android:label="fragment_game"
-        tools:layout="@layout/fragment_game" />
+        tools:layout="@layout/fragment_game" >
+        <action
+            android:id="@+id/action_gameFragment_to_homeFragment"
+            app:destination="@id/homeFragment" />
+        <argument
+            android:name="chosenColor"
+            app:argType="integer"
+            android:defaultValue="0" />
+    </fragment>
 </navigation>
