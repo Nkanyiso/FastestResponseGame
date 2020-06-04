@@ -47,6 +47,7 @@ class GameFragment : Fragment() {
             val args = GameFragmentArgs.fromBundle(it)
             viewModel.chosenColor.value = args.chosenColor
         }
+        binding.arrow.setColorFilter(requireActivity().getResources().getColor(Utilities.getColor(viewModel.chosenColor.value)))
         viewModel.getArrowDirection().observe(requireActivity(), Event.Observer {
             showArrow(it)
         })
@@ -90,24 +91,22 @@ class GameFragment : Fragment() {
 
     fun hideAllArrows() {
         viewModel.arrowShown = false
-        binding.arrowForward.visibility = View.GONE
-        binding.arrowRight.visibility = View.GONE
-        binding.arrowBack.visibility = View.GONE
-        binding.arrowLeft.visibility = View.GONE
+        binding.arrow.visibility = View.GONE
+
 
     }
 
     fun showArrow(direction: Int) {
         var arrow: ImageView
+        binding.arrow.rotation = 0f
         when (direction) {
-            1 -> arrow = binding.arrowForward
-            2 -> arrow = binding.arrowRight
-            3 -> arrow = binding.arrowBack
-            4 -> arrow = binding.arrowLeft
-            else -> arrow = binding.arrowForward
+            1 -> binding.arrow.rotation = 0f
+            2 -> binding.arrow.rotation = 90f
+            3 -> binding.arrow.rotation = 180f
+            4 -> binding.arrow.rotation = 270f
+            else -> binding.arrow.rotation = 0f
         }
-        arrow.visibility = View.VISIBLE
-        arrow.setColorFilter(requireActivity().getResources().getColor(Utilities.getColor(viewModel.chosenColor.value)))
+        binding.arrow.visibility = View.VISIBLE
         viewModel.arrowShown = true
         viewModel.waitingToShowArrow = false
 
