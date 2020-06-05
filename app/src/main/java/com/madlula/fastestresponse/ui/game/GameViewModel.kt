@@ -1,4 +1,4 @@
-package com.madlula.fastestresponse.viewModel
+package com.madlula.fastestresponse.ui.game
 
 import android.os.Handler
 import androidx.lifecycle.LiveData

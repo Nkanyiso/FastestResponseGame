@@ -1,4 +1,4 @@
-package com.madlula.fastestresponse.ui
+package com.madlula.fastestresponse.ui.home
 
 import android.content.DialogInterface
 import android.os.Bundle
@@ -12,8 +12,8 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.findNavController
 import com.madlula.fastestresponse.R
 import com.madlula.fastestresponse.databinding.FragmentHomeBinding
+import com.madlula.fastestresponse.ui.HomeFragmentDirections
 import com.madlula.fastestresponse.utilities.Event
-import com.madlula.fastestresponse.viewModel.HomeViewModel
 
 
 /**

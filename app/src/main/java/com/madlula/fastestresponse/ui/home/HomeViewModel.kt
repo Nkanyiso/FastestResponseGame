@@ -1,4 +1,4 @@
-package com.madlula.fastestresponse.viewModel
+package com.madlula.fastestresponse.ui.home
 
 import android.os.CountDownTimer
 import androidx.lifecycle.LiveData

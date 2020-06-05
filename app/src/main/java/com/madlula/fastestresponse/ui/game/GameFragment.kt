@@ -1,11 +1,6 @@
-package com.madlula.fastestresponse.ui
+package com.madlula.fastestresponse.ui.game
 
-import android.content.Context
-import android.content.Context.WINDOW_SERVICE
 import android.content.DialogInterface
-import android.hardware.Sensor
-import android.hardware.SensorEvent
-import android.hardware.SensorEventListener
 import android.hardware.SensorManager
 import android.os.Bundle
 import android.util.Log
@@ -15,12 +10,11 @@ import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
-import androidx.navigation.fragment.findNavController
 import com.madlula.fastestresponse.R
 import com.madlula.fastestresponse.databinding.FragmentGameBinding
+import com.madlula.fastestresponse.ui.GameFragmentArgs
 import com.madlula.fastestresponse.utilities.Event
 import com.madlula.fastestresponse.utilities.Utilities
-import com.madlula.fastestresponse.viewModel.GameViewModel
 
 
 /**
