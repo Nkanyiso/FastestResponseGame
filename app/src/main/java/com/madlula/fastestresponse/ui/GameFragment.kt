@@ -1,11 +1,15 @@
 package com.madlula.fastestresponse.ui
 
+import android.content.Context
+import android.content.Context.WINDOW_SERVICE
 import android.content.DialogInterface
+import android.hardware.Sensor
+import android.hardware.SensorEvent
+import android.hardware.SensorEventListener
 import android.hardware.SensorManager
 import android.os.Bundle
 import android.util.Log
 import android.view.*
-import android.widget.ImageView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
@@ -13,10 +17,10 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.findNavController
 import com.madlula.fastestresponse.R
-import com.madlula.fastestresponse.utilities.Utilities
 import com.madlula.fastestresponse.databinding.FragmentGameBinding
-import com.madlula.fastestresponse.viewModel.GameViewModel
 import com.madlula.fastestresponse.utilities.Event
+import com.madlula.fastestresponse.utilities.Utilities
+import com.madlula.fastestresponse.viewModel.GameViewModel
 
 
 /**
@@ -25,8 +29,6 @@ import com.madlula.fastestresponse.utilities.Event
 class GameFragment : Fragment() {
     private lateinit var binding: FragmentGameBinding
     private lateinit var viewModel: GameViewModel
-    var TAG = "Game fragment"
-
     lateinit var mOrientationEventListener: OrientationEventListener
     private var mDisplay: Display? = null
 
@@ -64,14 +66,26 @@ class GameFragment : Fragment() {
             binding.txtScore.text = "" + it
         })
 
+
+        // Get the display from the window manager (for rotation).
+
+        // Get the display from the window manager (for rotation).
+        val wm = context?.getSystemService(WINDOW_SERVICE) as WindowManager?
+        mDisplay = wm!!.defaultDisplay
     }
 
     override fun onResume() {
         super.onResume()
+
+    }
+
+    override fun onStart() {
+        super.onStart()
         mOrientationEventListener = object : OrientationEventListener(requireContext(),
                 SensorManager.SENSOR_DELAY_NORMAL) {
             override fun onOrientationChanged(orientation: Int) {
                 viewModel.detectedTilt(orientation)
+                Toast.makeText(requireContext(), "Tilted : " + orientation, Toast.LENGTH_SHORT).show()
             }
         }
 
@@ -89,42 +103,34 @@ class GameFragment : Fragment() {
         mOrientationEventListener.disable()
     }
 
-    fun hideAllArrows() {
+    private fun hideAllArrows() {
         viewModel.arrowShown = false
         binding.arrow.visibility = View.GONE
 
 
     }
 
-    fun showArrow(direction: Int) {
-        var arrow: ImageView
-        binding.arrow.rotation = 0f
-        when (direction) {
-            1 -> binding.arrow.rotation = 0f
-            2 -> binding.arrow.rotation = 90f
-            3 -> binding.arrow.rotation = 180f
-            4 -> binding.arrow.rotation = 270f
-            else -> binding.arrow.rotation = 0f
-        }
+    fun showArrow(direction: Float) {
+        binding.arrow.rotation = 0f // first reset to original position
+        binding.arrow.rotation = direction
         binding.arrow.visibility = View.VISIBLE
         viewModel.arrowShown = true
         viewModel.waitingToShowArrow = false
 
     }
 
-    fun gameStart() {
+    private fun gameStart() {
         hideAllArrows()
         Toast.makeText(requireContext(), getString(R.string.txt_game_begun), Toast.LENGTH_LONG).show()
     }
 
-    fun gameFinished() {
+    private fun gameFinished() {
         hideAllArrows()
         showFinalScore()
     }
 
 
-
-    fun showFinalScore() {
+    private fun showFinalScore() {
         val builder = AlertDialog.Builder(requireContext())
         builder.setTitle(getString(R.string.txt_final_score_title))
                 .setMessage(getString(R.string.txt_final_score) + viewModel.score.value.toString())

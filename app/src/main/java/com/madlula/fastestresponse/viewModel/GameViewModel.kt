@@ -12,7 +12,7 @@ import com.madlula.fastestresponse.utilities.Utilities.getRandomInterval
 class GameViewModel : ViewModel() {
     var chosenColor: MutableLiveData<Int> = MutableLiveData()
     var score: MutableLiveData<Int> = MutableLiveData<Int>()
-    var arrowDirection: MutableLiveData<Event<Int>> = MutableLiveData<Event<Int>>()
+    var arrowDirection: MutableLiveData<Event<Float>> = MutableLiveData<Event<Float>>()
     var intervalTime: Long = 0L
     var roundNumber : Int = 0
     var gameStarted : MutableLiveData<Event<Boolean>> = MutableLiveData<Event<Boolean>>()
@@ -29,10 +29,14 @@ class GameViewModel : ViewModel() {
     fun init() {
         score.value = 0
         gameStarted.value = Event(true)
+        arrowShown = false
+        waitingToShowArrow = false
+        isTilted = false
+        roundNumber = 0
         startNextRound()
     }
 
-    fun getArrowDirection(): LiveData<Event<Int>> = arrowDirection
+    fun getArrowDirection(): LiveData<Event<Float>> = arrowDirection
     fun isGameFinished(): LiveData<Event<Boolean>> = gameFinished
     fun isgameStarted():  LiveData<Event<Boolean>> = gameStarted
     fun getNextArrow():  LiveData<Event<Int>> = nextArrow
@@ -53,7 +57,7 @@ class GameViewModel : ViewModel() {
     }
     private fun doShowArrow(){
         waitingToShowArrow = false
-        arrowDirection.value = Event(getRandomDirection())
+        arrowDirection.value = Event(getRandomDirection().toFloat())
         startNextRound()
     }
     private fun startNextRound(){
@@ -73,36 +77,41 @@ class GameViewModel : ViewModel() {
         }
     }
     fun detectedTilt(orientation: Int) {
-        if (waitingToShowArrow) {
-            (score.value.toString().toInt() - 1)
-            return
-        } else if (isTilted) {
-            return
-        } else if (arrowShown) {
+//        if (waitingToShowArrow) {
+//            (score.value.toString().toInt() - 1)
+//            return
+//        } else if (isTilted) {
+//            return
+//        } else if (arrowShown) {
             when (orientation) {
-                in 1..120 -> {// up
-                    if (arrowDirection.value == Event(1)) {
+                in 0..25 -> {// up
+                    if (arrowDirection.value == Event(0)) {
                         score.value = (score.value.toString().toInt() + 1).toInt()
                     }
                 }
 
-                in 320..360 -> {//right
-                    if (arrowDirection.value == Event(2)) {
+                in 65..115 -> {//right
+                    if (arrowDirection.value == Event(90)) {
                         score.value = (score.value.toString().toInt() + 1).toInt()
                     }
                 }
-                in 240..290 -> {//Down
-                    if (arrowDirection.value == Event(3)) {
+                in 155..205 -> {//Down
+                    if (arrowDirection.value == Event(180)) {
                         score.value = (score.value.toString().toInt() + 1).toInt()
                     }
                 }
-                in 150..200 -> {//left
-                    if (arrowDirection.value == Event(4)) {
+                in 245..290 -> {//left
+                    if (arrowDirection.value == Event(270)) {
+                        score.value = (score.value.toString().toInt() + 1)
+                    }
+                }
+                in 335..360 -> {//left
+                    if (arrowDirection.value == Event(0)) {
                         score.value = (score.value.toString().toInt() + 1)
                     }
 
                 }
-            }
+//            }
         }
 
     }
