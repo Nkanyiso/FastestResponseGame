@@ -5,7 +5,7 @@ import kotlin.math.abs
 import kotlin.random.Random
 
 object Utilities {
-    open fun getColor(chosenColor: Int?): Int {
+     fun getColor(chosenColor: Int?): Int {
         when (chosenColor) {
             0 -> return R.color.Red
             1 -> return R.color.Blue
@@ -17,7 +17,7 @@ object Utilities {
 
     fun getRandomInterval(): Int = Random.nextInt(Constants.INTERVAL_MINIMUM_VALUE, Constants.INTERVAL_MAX_VALUE)
     fun getRandomDirection(): Int {
-        var pos = Random.nextInt(Constants.GAME_TILT_DIRECTION_MIN, Constants.GAME_TILT_DIRECTION_MAX)
+        val pos = Random.nextInt(Constants.GAME_TILT_DIRECTION_MIN, Constants.GAME_TILT_DIRECTION_MAX)
         return Constants.ARROW_ANGLES[pos]
     }
 

@@ -1,6 +1,7 @@
+@file:Suppress("DEPRECATION")
+
 package com.madlula.fastestresponse.ui.game
 
-import android.content.DialogInterface
 import android.hardware.SensorManager
 import android.os.Bundle
 import android.util.Log
@@ -13,6 +14,7 @@ import androidx.lifecycle.ViewModelProviders
 import com.madlula.fastestresponse.R
 import com.madlula.fastestresponse.databinding.FragmentGameBinding
 import com.madlula.fastestresponse.utilities.Constants
+import com.madlula.fastestresponse.utilities.Constants.SPACE
 import com.madlula.fastestresponse.utilities.Event
 import com.madlula.fastestresponse.utilities.Utilities
 
@@ -20,6 +22,7 @@ import com.madlula.fastestresponse.utilities.Utilities
 /**
  * Game fragment where tilt is detected.
  */
+@Suppress("DEPRECATION")
 class GameFragment : Fragment() {
     private lateinit var binding: FragmentGameBinding
     private lateinit var viewModel: GameViewModel
@@ -42,7 +45,7 @@ class GameFragment : Fragment() {
             val args = GameFragmentArgs.fromBundle(it)
             viewModel.chosenColor.value = args.chosenColor
         }
-        binding.arrow.setColorFilter(requireActivity().getResources().getColor(Utilities.getColor(viewModel.chosenColor.value)))
+        binding.arrow.setColorFilter(requireActivity().resources.getColor(Utilities.getColor(viewModel.chosenColor.value)))
         viewModel.getArrowDirection().observe(viewLifecycleOwner, Event.Observer {
             showArrow(it)
         })
@@ -60,9 +63,9 @@ class GameFragment : Fragment() {
             }
         })
         viewModel.score.observe(viewLifecycleOwner, Observer {
-            binding.txtScore.text = "" + it
+            binding.txtScore.text = Constants.EMPTY_STRING + it
         })
-        startWatchingOrientation();
+        startWatchingOrientation()
 
 
     }
@@ -97,7 +100,7 @@ class GameFragment : Fragment() {
             }
         }
 
-        if (mOrientationEventListener.canDetectOrientation() === true) {
+        if (mOrientationEventListener.canDetectOrientation()) {
             Log.v("DEBUG_TAG", "Can detect orientation")
             mOrientationEventListener.enable()
         } else {
@@ -121,11 +124,11 @@ class GameFragment : Fragment() {
     private fun showFinalScore() {
         val builder = AlertDialog.Builder(requireContext())
         builder.setTitle(getString(R.string.txt_final_score_title ))
-                .setMessage(getString(R.string.txt_final_score) + Constants.EMPTY_STRING + viewModel.score.value.toString())
-                .setPositiveButton(getString(R.string.btn_play_again), DialogInterface.OnClickListener { dialog, _ ->
+                .setMessage(getString(R.string.txt_final_score) + SPACE + viewModel.score.value.toString())
+                .setPositiveButton(getString(R.string.btn_play_again)) { dialog, _ ->
                     dialog.dismiss()
                     viewModel.init()
-                })
+                }
         builder.show()
         builder.setCancelable(true)
     }

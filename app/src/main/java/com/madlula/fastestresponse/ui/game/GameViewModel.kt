@@ -14,17 +14,17 @@ class GameViewModel : ViewModel() {
     var chosenColor: MutableLiveData<Int> = MutableLiveData()
     var score: MutableLiveData<Int> = MutableLiveData<Int>()
     private var arrowDirection: MutableLiveData<Event<Float>> = MutableLiveData<Event<Float>>()
-    var intervalTime: Long = 0L
+    private var intervalTime: Long = 0L
     private var roundNumber: Int = 0
-    var gameStarted: MutableLiveData<Event<Boolean>> = MutableLiveData<Event<Boolean>>()
-    var nextArrow: MutableLiveData<Event<Int>> = MutableLiveData<Event<Int>>()
-    var gameFinished: MutableLiveData<Event<Boolean>> = MutableLiveData<Event<Boolean>>()
-    var lastOrientationPosition: Int = 0
+    private var gameStarted: MutableLiveData<Event<Boolean>> = MutableLiveData<Event<Boolean>>()
+    private var nextArrow: MutableLiveData<Event<Int>> = MutableLiveData<Event<Int>>()
+    private var gameFinished: MutableLiveData<Event<Boolean>> = MutableLiveData<Event<Boolean>>()
+    private var lastOrientationPosition: Int = 0
 
 
     var arrowShown: Boolean = false
     var waitingToShowArrow: Boolean = false
-    var isTilted = false;
+    var isTilted = false
 
 
     fun init() {
@@ -100,7 +100,7 @@ class GameViewModel : ViewModel() {
             return
         } else if (arrowShown) {
             if (arrowDirection.value!!.peek() == Utilities.isAcceptableTilt(lastOrientationPosition, orientation).toFloat()) {
-                score.value = (score.value.toString().toInt() + 1).toInt()
+                score.value = (score.value.toString().toInt() + 1)
                 isTilted = true
             }
             lastOrientationPosition = orientation

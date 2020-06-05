@@ -2,6 +2,7 @@ package com.madlula.fastestresponse.utilities
 
 object Constants {
     const val EMPTY_STRING = ""
+    const val SPACE = " "
     const val DEFAULT_DELAY = 3000L
     const val DEFAULT_DELAY_TWO = 2000L
     const val COUNT_DOWN_MAX_VALUE = 3000L
