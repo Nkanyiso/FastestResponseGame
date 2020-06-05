@@ -57,7 +57,7 @@ class GameViewModel : ViewModel() {
     }
     private fun doShowArrow(){
         waitingToShowArrow = false
-        arrowDirection.value = Event(getRandomDirection().toFloat())
+        arrowDirection.value =  Event(getRandomDirection().toFloat())
         startNextRound()
     }
     private fun startNextRound(){
@@ -77,6 +77,9 @@ class GameViewModel : ViewModel() {
         }
     }
     fun detectedTilt(orientation: Int) {
+        if(arrowDirection.value == null){
+            return;
+        }
 //        if (waitingToShowArrow) {
 //            (score.value.toString().toInt() - 1)
 //            return
@@ -85,28 +88,28 @@ class GameViewModel : ViewModel() {
 //        } else if (arrowShown) {
             when (orientation) {
                 in 0..25 -> {// up
-                    if (arrowDirection.value == Event(0)) {
+                    if (arrowDirection.value!!.peek() == 0F) {
                         score.value = (score.value.toString().toInt() + 1).toInt()
                     }
                 }
 
                 in 65..115 -> {//right
-                    if (arrowDirection.value == Event(90)) {
+                    if (arrowDirection.value!!.peek() == 0F) {
                         score.value = (score.value.toString().toInt() + 1).toInt()
                     }
                 }
                 in 155..205 -> {//Down
-                    if (arrowDirection.value == Event(180)) {
+                    if (arrowDirection.value!!.peek() == 270F) {
                         score.value = (score.value.toString().toInt() + 1).toInt()
                     }
                 }
                 in 245..290 -> {//left
-                    if (arrowDirection.value == Event(270)) {
+                    if (arrowDirection.value!!.peek() == 180F) {
                         score.value = (score.value.toString().toInt() + 1)
                     }
                 }
                 in 335..360 -> {//left
-                    if (arrowDirection.value == Event(0)) {
+                    if (arrowDirection.value!!.peek() == 90F) {
                         score.value = (score.value.toString().toInt() + 1)
                     }
 

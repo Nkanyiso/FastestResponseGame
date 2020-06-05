@@ -50,52 +50,36 @@ class GameFragment : Fragment() {
             viewModel.chosenColor.value = args.chosenColor
         }
         binding.arrow.setColorFilter(requireActivity().getResources().getColor(Utilities.getColor(viewModel.chosenColor.value)))
-        viewModel.getArrowDirection().observe(requireActivity(), Event.Observer {
+        viewModel.getArrowDirection().observe(viewLifecycleOwner, Event.Observer {
             showArrow(it)
         })
-        viewModel.getNextArrow().observe(requireActivity(), Event.Observer {
+        viewModel.getNextArrow().observe(viewLifecycleOwner, Event.Observer {
             hideAllArrows()
         })
-        viewModel.isGameFinished().observe(requireActivity(), Event.Observer {
+        viewModel.isGameFinished().observe(viewLifecycleOwner, Event.Observer {
+            if(it){
             gameFinished()
+            }
         })
         viewModel.isgameStarted().observe(requireActivity(), Event.Observer {
+            if(it){
             gameStart()
+        }
         })
-        viewModel.score.observe(requireActivity(), Observer {
+        viewModel.score.observe(viewLifecycleOwner, Observer {
             binding.txtScore.text = "" + it
         })
+        startWatchingOrientation();
 
 
-        // Get the display from the window manager (for rotation).
-
-        // Get the display from the window manager (for rotation).
-        val wm = context?.getSystemService(WINDOW_SERVICE) as WindowManager?
-        mDisplay = wm!!.defaultDisplay
-    }
-
-    override fun onResume() {
-        super.onResume()
 
     }
+
+
 
     override fun onStart() {
         super.onStart()
-        mOrientationEventListener = object : OrientationEventListener(requireContext(),
-                SensorManager.SENSOR_DELAY_NORMAL) {
-            override fun onOrientationChanged(orientation: Int) {
-                viewModel.detectedTilt(orientation)
-                Toast.makeText(requireContext(), "Tilted : " + orientation, Toast.LENGTH_SHORT).show()
-            }
-        }
 
-        if (mOrientationEventListener.canDetectOrientation() === true) {
-            Log.v("DEBUG_TAG", "Can detect orientation")
-            mOrientationEventListener.enable()
-        } else {
-            Log.v("DEBUG_TAG", "Cannot detect orientation")
-            mOrientationEventListener.disable()
-        }
     }
 
     override fun onPause() {
@@ -118,26 +102,46 @@ class GameFragment : Fragment() {
         viewModel.waitingToShowArrow = false
 
     }
+    private fun startWatchingOrientation(){
+        mOrientationEventListener = object : OrientationEventListener(requireContext(),
+                SensorManager.SENSOR_DELAY_NORMAL) {
+            override fun onOrientationChanged(orientation: Int) {
+                viewModel.detectedTilt(orientation)
+                //var rotation = mDisplay?.
+                Toast.makeText(requireContext(), "Tilted : " + orientation, Toast.LENGTH_SHORT).show()
+            }
+        }
 
+        if (mOrientationEventListener.canDetectOrientation() === true) {
+            Log.v("DEBUG_TAG", "Can detect orientation")
+            mOrientationEventListener.enable()
+        } else {
+            Log.v("DEBUG_TAG", "Cannot detect orientation")
+            mOrientationEventListener.disable()
+        }
+    }
     private fun gameStart() {
+
         hideAllArrows()
         Toast.makeText(requireContext(), getString(R.string.txt_game_begun), Toast.LENGTH_LONG).show()
     }
 
     private fun gameFinished() {
+     //   mOrientationEventListener.disable()
         hideAllArrows()
         showFinalScore()
     }
 
 
     private fun showFinalScore() {
+
         val builder = AlertDialog.Builder(requireContext())
         builder.setTitle(getString(R.string.txt_final_score_title))
                 .setMessage(getString(R.string.txt_final_score) + viewModel.score.value.toString())
-                .setPositiveButton(getString(R.string.btn_play_again), DialogInterface.OnClickListener({ dialog, color ->
+                .setPositiveButton(getString(R.string.btn_play_again), DialogInterface.OnClickListener { dialog, _ ->
                     dialog.dismiss()
-                    findNavController().navigate(R.id.action_gameFragment_to_homeFragment)
-                }))
+                    viewModel.init()
+                })
         builder.show()
         builder.setCancelable(true)
     }
