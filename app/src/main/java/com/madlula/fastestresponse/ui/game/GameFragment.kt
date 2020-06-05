@@ -2,6 +2,7 @@
 
 package com.madlula.fastestresponse.ui.game
 
+import android.annotation.SuppressLint
 import android.hardware.SensorManager
 import android.os.Bundle
 import android.util.Log
@@ -14,6 +15,7 @@ import androidx.lifecycle.ViewModelProviders
 import com.madlula.fastestresponse.R
 import com.madlula.fastestresponse.databinding.FragmentGameBinding
 import com.madlula.fastestresponse.utilities.Constants
+import com.madlula.fastestresponse.utilities.Constants.EMPTY_STRING
 import com.madlula.fastestresponse.utilities.Constants.SPACE
 import com.madlula.fastestresponse.utilities.Event
 import com.madlula.fastestresponse.utilities.Utilities
@@ -26,26 +28,24 @@ import com.madlula.fastestresponse.utilities.Utilities
 class GameFragment : Fragment() {
     private lateinit var binding: FragmentGameBinding
     private lateinit var viewModel: GameViewModel
-    lateinit var mOrientationEventListener: OrientationEventListener
+    private lateinit var orientationEventListener: OrientationEventListener
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
         viewModel = ViewModelProviders.of(requireActivity()).get(GameViewModel::class.java)
-        viewModel.init()
         binding = FragmentGameBinding.inflate(layoutInflater)
-
+        binding.lifecycleOwner = this
         return binding.root
     }
 
+    @SuppressLint("SetTextI18n")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        arguments?.let {
-            val args = GameFragmentArgs.fromBundle(it)
-            viewModel.chosenColor.value = args.chosenColor
-        }
-        binding.arrow.setColorFilter(requireActivity().resources.getColor(Utilities.getColor(viewModel.chosenColor.value)))
+        viewModel.getChosenColor().observe(viewLifecycleOwner,Event.Observer{
+            binding.arrow.setColorFilter(requireActivity().resources.getColor(Utilities.getColor(it)))
+        })
         viewModel.getArrowDirection().observe(viewLifecycleOwner, Event.Observer {
             showArrow(it)
         })
@@ -54,7 +54,8 @@ class GameFragment : Fragment() {
         })
         viewModel.isGameFinished().observe(viewLifecycleOwner, Event.Observer {
             if (it) {
-                gameFinished()
+                hideAllArrows()
+                showFinalScore()
             }
         })
         viewModel.isGameStarted().observe(requireActivity(), Event.Observer {
@@ -62,75 +63,76 @@ class GameFragment : Fragment() {
                 gameStart()
             }
         })
-        viewModel.score.observe(viewLifecycleOwner, Observer {
-            binding.txtScore.text = Constants.EMPTY_STRING + it
+        viewModel.getScore().observe(viewLifecycleOwner, Observer {
+            binding.txtScore.text =  EMPTY_STRING + it
         })
-        startWatchingOrientation()
+
+        viewModel.init(GameFragmentArgs.fromBundle(requireArguments()).chosenColor)
 
 
     }
 
+    override fun onResume() {
+        super.onResume()
+        startWatchingOrientation()
+       // orientationEventListener.enable()
+    }
 
     override fun onPause() {
         super.onPause()
-        mOrientationEventListener.disable()
+        orientationEventListener.disable()
     }
 
     private fun hideAllArrows() {
-        viewModel.arrowShown = false
         binding.arrow.visibility = View.GONE
 
 
     }
 
     private fun showArrow(direction: Float) {
-        binding.arrow.rotation = 0f // first reset to original position
+        binding.arrow.rotation = Constants.ARROW_ANGLES[0].toFloat() // first reset to original position
         binding.arrow.rotation = direction
         binding.arrow.visibility = View.VISIBLE
-        viewModel.arrowShown = true
-        viewModel.waitingToShowArrow = false
+
 
     }
 
     private fun startWatchingOrientation() {
-        mOrientationEventListener = object : OrientationEventListener(requireContext(),
+        orientationEventListener = object : OrientationEventListener(requireContext(),
                 SensorManager.SENSOR_DELAY_NORMAL) {
             override fun onOrientationChanged(orientation: Int) {
                 viewModel.detectedTilt(orientation)
+
             }
         }
 
-        if (mOrientationEventListener.canDetectOrientation()) {
+        if (orientationEventListener.canDetectOrientation()) {
             Log.v("DEBUG_TAG", "Can detect orientation")
-            mOrientationEventListener.enable()
+            orientationEventListener.enable()
         } else {
             Log.v("DEBUG_TAG", "Cannot detect orientation")
-            mOrientationEventListener.disable()
+            orientationEventListener.disable()
         }
     }
 
     private fun gameStart() {
-
         hideAllArrows()
         Toast.makeText(requireContext(), getString(R.string.txt_game_begun), Toast.LENGTH_LONG).show()
     }
 
-    private fun gameFinished() {
-        hideAllArrows()
-        showFinalScore()
-    }
+
 
 
     private fun showFinalScore() {
         val builder = AlertDialog.Builder(requireContext())
         builder.setTitle(getString(R.string.txt_final_score_title ))
-                .setMessage(getString(R.string.txt_final_score) + SPACE + viewModel.score.value.toString())
+                .setMessage(getString(R.string.txt_final_score) + SPACE + viewModel.getScore().value?.toString())
                 .setPositiveButton(getString(R.string.btn_play_again)) { dialog, _ ->
                     dialog.dismiss()
-                    viewModel.init()
+                    viewModel.init(GameFragmentArgs.fromBundle(requireArguments()).chosenColor)
                 }
         builder.show()
-        builder.setCancelable(true)
+
     }
 
 }

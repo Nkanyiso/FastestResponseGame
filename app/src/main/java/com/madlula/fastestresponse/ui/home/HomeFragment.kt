@@ -1,6 +1,8 @@
+@file:Suppress("DEPRECATION")
+
 package com.madlula.fastestresponse.ui.home
 
-import android.content.DialogInterface
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -12,6 +14,7 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.findNavController
 import com.madlula.fastestresponse.R
 import com.madlula.fastestresponse.databinding.FragmentHomeBinding
+import com.madlula.fastestresponse.utilities.Constants
 import com.madlula.fastestresponse.utilities.Event
 
 
@@ -28,6 +31,7 @@ class HomeFragment : Fragment() {
 
         viewModel = ViewModelProviders.of(requireActivity()).get(HomeViewModel::class.java)
         binding = FragmentHomeBinding.inflate(layoutInflater)
+        binding.lifecycleOwner = this
         return binding.root
 
     }
@@ -35,49 +39,41 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        viewModel.isAppInitialized().observe(requireActivity(), Event.Observer {
+        viewModel.isAppInitialized().observe(viewLifecycleOwner, Event.Observer {
             if (it) {
-                proptUserPickeColor()
+                promptUserToPickColor()
             }
         })
-        viewModel.isCountDownFinished().observe(requireActivity(), Observer {
-            finishedCountDown()
+        viewModel.goStartGame().observe(viewLifecycleOwner, Observer {
+            goStartGame()
         })
-        viewModel.getcountDown().observe(requireActivity(), Event.Observer {
+        viewModel.getCountDown().observe(viewLifecycleOwner, Event.Observer {
             updateCountDown(it)
         })
         viewModel.init()
-
-
     }
 
-    override fun onResume() {
-        super.onResume()
-    }
-
-    fun proptUserPickeColor() {
+    private fun promptUserToPickColor() {
         val builder = AlertDialog.Builder(requireContext())
         var pickedColor = 0
         builder.setTitle(R.string.tittle_color_dialog)
-                .setSingleChoiceItems(R.array.color_list, 0,
-                        DialogInterface.OnClickListener { _, color ->
-                            // dialog.cancel()
-                            pickedColor = color
-
-
-                        })
-                .setPositiveButton(getString(R.string.btn_ok), DialogInterface.OnClickListener({ dialog, color ->
+                .setSingleChoiceItems(R.array.color_list, 0
+                ) { _, color ->
+                    pickedColor = color
+                }
+                .setPositiveButton(getString(R.string.btn_ok)) { dialog, _ ->
                     viewModel.setChosenColor(pickedColor)
                     dialog.dismiss()
-                }))
+                }
         builder.show()
-        builder.setCancelable(true)
+
     }
 
-    fun updateCountDown(millisUntilFinished: Long){
-        binding.txtCountDown.text = "" + millisUntilFinished / 1000
+    @SuppressLint("SetTextI18n")
+    private fun updateCountDown(millisUntilFinished: Long){
+        binding.txtCountDown.text = Constants.EMPTY_STRING + millisUntilFinished / 1000
     }
-    fun finishedCountDown(){
+    private fun goStartGame(){
         binding.txtCountDown.text = getString(R.string.str_done)
         val action = HomeFragmentDirections.actionHomeFragmentToGameFragment(viewModel.chosenColor.value!!)
         findNavController().navigate(action)

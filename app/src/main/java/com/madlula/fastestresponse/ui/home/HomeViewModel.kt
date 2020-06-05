@@ -8,13 +8,13 @@ import com.madlula.fastestresponse.utilities.Constants
 import com.madlula.fastestresponse.utilities.Event
 
 class HomeViewModel : ViewModel() {
-    var appInitialized: MutableLiveData<Event<Boolean>> = MutableLiveData<Event<Boolean>>()
-    var chosenColor: MutableLiveData<Int> = MutableLiveData()
-    var countDown: MutableLiveData<Event<Long>> = MutableLiveData<Event<Long>>()
-    var countDownFinished: MutableLiveData<Event<Boolean>> = MutableLiveData<Event<Boolean>>()
+    private var appInitialized = MutableLiveData<Event<Boolean>>()
+     var chosenColor = MutableLiveData<Int>()
+    private var countDown = MutableLiveData<Event<Long>>()
+    var countDownFinished = MutableLiveData<Event<Boolean>>()
     fun isAppInitialized(): LiveData<Event<Boolean>> = appInitialized
-    fun isCountDownFinished(): LiveData<Event<Boolean>> = countDownFinished
-    fun getcountDown():  LiveData<Event<Long>> = countDown
+    fun goStartGame(): LiveData<Event<Boolean>> = countDownFinished
+    fun getCountDown():  LiveData<Event<Long>> = countDown
     fun init() {
         appInitialized.value = Event(true)
     }
@@ -22,7 +22,7 @@ class HomeViewModel : ViewModel() {
         chosenColor.value = color
         doCountDown()
     }
-    fun doCountDown() {
+    private fun doCountDown() {
         object : CountDownTimer(Constants.COUNT_DOWN_MAX_VALUE, Constants.COUNT_DOWN_INTERVAL) {
             override fun onTick(millisUntilFinished: Long) {
                 countDown.value = Event(millisUntilFinished)

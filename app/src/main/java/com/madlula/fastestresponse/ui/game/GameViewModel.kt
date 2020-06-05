@@ -11,25 +11,28 @@ import com.madlula.fastestresponse.utilities.Utilities.getRandomDirection
 import com.madlula.fastestresponse.utilities.Utilities.getRandomInterval
 
 class GameViewModel : ViewModel() {
-    var chosenColor: MutableLiveData<Int> = MutableLiveData()
-    var score: MutableLiveData<Int> = MutableLiveData<Int>()
-    private var arrowDirection: MutableLiveData<Event<Float>> = MutableLiveData<Event<Float>>()
+    private var chosenColor = MutableLiveData<Event<Int>>()
+    private var score =  MutableLiveData<Int>()
+    private var arrowDirection = MutableLiveData<Event<Float>>()
     private var intervalTime: Long = 0L
     private var roundNumber: Int = 0
     private var gameStarted: MutableLiveData<Event<Boolean>> = MutableLiveData<Event<Boolean>>()
-    private var nextArrow: MutableLiveData<Event<Int>> = MutableLiveData<Event<Int>>()
-    private var gameFinished: MutableLiveData<Event<Boolean>> = MutableLiveData<Event<Boolean>>()
+    private var nextArrow = MutableLiveData<Event<Int>>()
+    private var gameFinished = MutableLiveData<Event<Boolean>>()
     private var lastOrientationPosition: Int = 0
+    private var arrowShown: Boolean = false
+    private var waitingToShowArrow: Boolean = false
+    private var isTilted = false
 
 
-    var arrowShown: Boolean = false
-    var waitingToShowArrow: Boolean = false
-    var isTilted = false
-
-
-    fun init() {
+    fun init(color : Int?) {
         score.value = 0
+        color?.let { it ->
+            chosenColor.value = Event(data = it)
+        }
+
         gameStarted.value = Event(true)
+        gameFinished.value = Event(false)
         arrowShown = false
         waitingToShowArrow = false
         isTilted = false
@@ -41,6 +44,8 @@ class GameViewModel : ViewModel() {
     fun isGameFinished(): LiveData<Event<Boolean>> = gameFinished
     fun isGameStarted(): LiveData<Event<Boolean>> = gameStarted
     fun getNextArrow(): LiveData<Event<Int>> = nextArrow
+    fun getChosenColor(): LiveData<Event<Int>> = chosenColor
+    fun getScore(): LiveData<Int> = score
 
 
     private fun rotateArrow() {
@@ -60,9 +65,9 @@ class GameViewModel : ViewModel() {
 
     private fun doShowArrow() {
         waitingToShowArrow = false
-
-        arrowDirection.value = Event(getRandomDirection().toFloat())
         isTilted = false
+        arrowDirection.value = Event(getRandomDirection().toFloat())
+        arrowShown = true
         startNextRound()
     }
 
@@ -81,17 +86,18 @@ class GameViewModel : ViewModel() {
             //game finished
             Handler().postDelayed({
                 gameFinished.value = Event(true)
+                arrowShown = false
             }, Constants.DEFAULT_DELAY)
 
         }
     }
 
     fun detectedTilt(orientation: Int) {
-        if (arrowDirection.value == null || gameFinished.value?.peek() ?: false || gameStarted.value?.peek() ?: false == false) {
+        if (arrowDirection.value == null || gameFinished.value?.peek() == true || gameStarted.value?.peek() != true) {
             lastOrientationPosition = orientation
-            return;
-        } else if (waitingToShowArrow) {
-            score.value = (score.value.toString().toInt() - 1)
+            return
+        } else if (waitingToShowArrow && !isTilted) {
+            score.value =  (score.value.toString().toInt() - 1)
             isTilted = true
             lastOrientationPosition = orientation
             return
@@ -99,8 +105,9 @@ class GameViewModel : ViewModel() {
             lastOrientationPosition = orientation
             return
         } else if (arrowShown) {
+          //  score.value =  20
             if (arrowDirection.value!!.peek() == Utilities.isAcceptableTilt(lastOrientationPosition, orientation).toFloat()) {
-                score.value = (score.value.toString().toInt() + 1)
+                score.value =  (score.value.toString().toInt() + 1)
                 isTilted = true
             }
             lastOrientationPosition = orientation
