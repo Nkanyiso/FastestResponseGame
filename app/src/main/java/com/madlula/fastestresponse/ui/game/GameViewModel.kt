@@ -6,6 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.madlula.fastestresponse.utilities.Constants
 import com.madlula.fastestresponse.utilities.Event
+import com.madlula.fastestresponse.utilities.Utilities
 import com.madlula.fastestresponse.utilities.Utilities.getRandomDirection
 import com.madlula.fastestresponse.utilities.Utilities.getRandomInterval
 
@@ -14,12 +15,13 @@ class GameViewModel : ViewModel() {
     var score: MutableLiveData<Int> = MutableLiveData<Int>()
     var arrowDirection: MutableLiveData<Event<Float>> = MutableLiveData<Event<Float>>()
     var intervalTime: Long = 0L
-    var roundNumber : Int = 0
-    var gameStarted : MutableLiveData<Event<Boolean>> = MutableLiveData<Event<Boolean>>()
-    var nextArrow : MutableLiveData<Event<Int>> = MutableLiveData<Event<Int>>()
+    var roundNumber: Int = 0
+    var gameStarted: MutableLiveData<Event<Boolean>> = MutableLiveData<Event<Boolean>>()
+    var nextArrow: MutableLiveData<Event<Int>> = MutableLiveData<Event<Int>>()
     var gameFinished: MutableLiveData<Event<Boolean>> = MutableLiveData<Event<Boolean>>()
     var prevArrowDirection = 0;
-    var lastPosition : Int = 0
+    var lastOrientationPosition: Int = 0
+
 
     var arrowShown: Boolean = false
     var waitingToShowArrow: Boolean = false
@@ -38,83 +40,78 @@ class GameViewModel : ViewModel() {
 
     fun getArrowDirection(): LiveData<Event<Float>> = arrowDirection
     fun isGameFinished(): LiveData<Event<Boolean>> = gameFinished
-    fun isgameStarted():  LiveData<Event<Boolean>> = gameStarted
-    fun getNextArrow():  LiveData<Event<Int>> = nextArrow
+    fun isgameStarted(): LiveData<Event<Boolean>> = gameStarted
+    fun getNextArrow(): LiveData<Event<Int>> = nextArrow
 
 
-    private fun rotateArrow(){
+    private fun rotateArrow() {
+
         waitingToShowArrow = true
         isTilted = false
 
-        if(roundNumber > 1){
+        if (roundNumber > 1) {
             Handler().postDelayed({
                 doShowArrow()
-            }, intervalTime )
-        }else{
+            }, intervalTime)
+        } else {
             doShowArrow()
         }
 
     }
-    private fun doShowArrow(){
+
+    private fun doShowArrow() {
         waitingToShowArrow = false
-        arrowDirection.value =  Event(getRandomDirection().toFloat())
+
+        arrowDirection.value = Event(getRandomDirection().toFloat())
+        isTilted = false
         startNextRound()
     }
-    private fun startNextRound(){
-        if (Constants.GAME_ROUND_MAX != roundNumber  ) {
+
+    private fun startNextRound() {
+        if (Constants.GAME_ROUND_MAX != roundNumber) {
             Handler().postDelayed({
                 intervalTime = (getRandomInterval() * 1000).toLong()
-                roundNumber ++
+                roundNumber++
                 nextArrow.value = Event(roundNumber)
-                rotateArrow()
-            }, 3000)//only show arrow for 3 seconds
+                Handler().postDelayed({
+                    rotateArrow()
+                }, Constants.DEFAULT_DELAY_TWO)//give user enough time to put device in default position after each round
+
+            }, Constants.DEFAULT_DELAY)//only show arrow for 3 seconds
         } else {
             //game finished
             Handler().postDelayed({
-            gameFinished.value = Event(true)
-            }, 3000)
+                gameFinished.value = Event(true)
+            }, Constants.DEFAULT_DELAY)
 
         }
     }
+
     fun detectedTilt(orientation: Int) {
-        if(arrowDirection.value == null){
+        if (arrowDirection.value == null || gameFinished.value?.peek() ?: false || gameStarted.value?.peek() ?: false == false) {
+            lastOrientationPosition = orientation
             return;
-        }
-//        if (waitingToShowArrow) {
-//            (score.value.toString().toInt() - 1)
-//            return
-//        } else if (isTilted) {
-//            return
-//        } else if (arrowShown) {
-            when (orientation) {
-                in 0..25 -> {// up
-                    if (arrowDirection.value!!.peek() == 0F) {
-                        score.value = (score.value.toString().toInt() + 1).toInt()
-                    }
-                }
-
-                in 65..115 -> {//right
-                    if (arrowDirection.value!!.peek() == 0F) {
-                        score.value = (score.value.toString().toInt() + 1).toInt()
-                    }
-                }
-                in 155..205 -> {//Down
-                    if (arrowDirection.value!!.peek() == 270F) {
-                        score.value = (score.value.toString().toInt() + 1).toInt()
-                    }
-                }
-                in 245..290 -> {//left
-                    if (arrowDirection.value!!.peek() == 180F) {
-                        score.value = (score.value.toString().toInt() + 1)
-                    }
-                }
-                in 335..360 -> {//left
-                    if (arrowDirection.value!!.peek() == 90F) {
-                        score.value = (score.value.toString().toInt() + 1)
-                    }
-
-                }
+        } else if (waitingToShowArrow) {
+//            if((score.value.toString().toInt() - 1) > 0) {
+                score.value = (score.value.toString().toInt() - 1)
+//            }else{
+//                score.value =  0// minimum score should be zero
 //            }
+
+            lastOrientationPosition = orientation
+            return
+        } else if (isTilted) {
+            lastOrientationPosition = orientation
+            return
+        } else if (arrowShown && (orientation - lastOrientationPosition) > 50) {
+
+            if (arrowDirection.value!!.peek() == Utilities.isAcceptableTilt(lastOrientationPosition, orientation).toFloat()) {
+                score.value = (score.value.toString().toInt() + 1).toInt()
+                isTilted = true
+            }
+            lastOrientationPosition = orientation
+        } else {
+            lastOrientationPosition = orientation
         }
 
     }

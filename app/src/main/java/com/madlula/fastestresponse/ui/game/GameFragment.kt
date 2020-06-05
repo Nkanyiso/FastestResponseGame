@@ -12,7 +12,6 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import com.madlula.fastestresponse.R
 import com.madlula.fastestresponse.databinding.FragmentGameBinding
-import com.madlula.fastestresponse.ui.GameFragmentArgs
 import com.madlula.fastestresponse.utilities.Event
 import com.madlula.fastestresponse.utilities.Utilities
 
@@ -24,7 +23,6 @@ class GameFragment : Fragment() {
     private lateinit var binding: FragmentGameBinding
     private lateinit var viewModel: GameViewModel
     lateinit var mOrientationEventListener: OrientationEventListener
-    private var mDisplay: Display? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {

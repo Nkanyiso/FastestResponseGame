@@ -12,7 +12,6 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.findNavController
 import com.madlula.fastestresponse.R
 import com.madlula.fastestresponse.databinding.FragmentHomeBinding
-import com.madlula.fastestresponse.ui.HomeFragmentDirections
 import com.madlula.fastestresponse.utilities.Event
 
 

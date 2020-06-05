@@ -21,4 +21,18 @@ object Utilities {
         return Constants.ARROW_ANGLES[pos]
     }
 
+    fun isAcceptableTilt(previousTilt: Int, newTilt: Int): Int {
+        return if (abs(newTilt - previousTilt) >= Constants.GAME_TILT_VARIANT) {
+            when (newTilt) {
+                in 0..115 -> 0//forward
+                in 155..205 -> 270//backward
+                in 245..295 -> 180//left
+                in 335..360 -> 90//right
+                else -> -1
+            }
+        } else {
+            -1
+        }
+    }
+
 }
