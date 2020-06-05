@@ -69,11 +69,6 @@ class GameFragment : Fragment() {
 
 
 
-    override fun onStart() {
-        super.onStart()
-
-    }
-
     override fun onPause() {
         super.onPause()
         mOrientationEventListener.disable()
@@ -86,7 +81,7 @@ class GameFragment : Fragment() {
 
     }
 
-    fun showArrow(direction: Float) {
+    private fun showArrow(direction: Float) {
         binding.arrow.rotation = 0f // first reset to original position
         binding.arrow.rotation = direction
         binding.arrow.visibility = View.VISIBLE
@@ -99,8 +94,6 @@ class GameFragment : Fragment() {
                 SensorManager.SENSOR_DELAY_NORMAL) {
             override fun onOrientationChanged(orientation: Int) {
                 viewModel.detectedTilt(orientation)
-                //var rotation = mDisplay?.
-                Toast.makeText(requireContext(), "Tilted : " + orientation, Toast.LENGTH_SHORT).show()
             }
         }
 
@@ -119,14 +112,12 @@ class GameFragment : Fragment() {
     }
 
     private fun gameFinished() {
-     //   mOrientationEventListener.disable()
         hideAllArrows()
         showFinalScore()
     }
 
 
     private fun showFinalScore() {
-
         val builder = AlertDialog.Builder(requireContext())
         builder.setTitle(getString(R.string.txt_final_score_title))
                 .setMessage(getString(R.string.txt_final_score) + viewModel.score.value.toString())

@@ -19,7 +19,6 @@ class GameViewModel : ViewModel() {
     var gameStarted: MutableLiveData<Event<Boolean>> = MutableLiveData<Event<Boolean>>()
     var nextArrow: MutableLiveData<Event<Int>> = MutableLiveData<Event<Int>>()
     var gameFinished: MutableLiveData<Event<Boolean>> = MutableLiveData<Event<Boolean>>()
-    var prevArrowDirection = 0;
     var lastOrientationPosition: Int = 0
 
 
@@ -92,12 +91,8 @@ class GameViewModel : ViewModel() {
             lastOrientationPosition = orientation
             return;
         } else if (waitingToShowArrow) {
-//            if((score.value.toString().toInt() - 1) > 0) {
                 score.value = (score.value.toString().toInt() - 1)
-//            }else{
-//                score.value =  0// minimum score should be zero
-//            }
-
+                isTilted = true
             lastOrientationPosition = orientation
             return
         } else if (isTilted) {
