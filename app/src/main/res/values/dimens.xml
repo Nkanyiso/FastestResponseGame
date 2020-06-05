@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="arrow_width">100dp</dimen>
+    <dimen name="arrow_height">100dp</dimen>
+    <dimen name="default_margin">16dp</dimen>
+    <dimen name="count_down_txt_width">120dp</dimen>
+    <dimen name="count_down_txt_height">120dp</dimen>
+    <dimen name="zero_dp">0dp</dimen>
+</resources>

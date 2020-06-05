@@ -8,6 +8,10 @@
     <string name="str_done">done!</string>
     <string name="txt_game_begun">Game has Begun!</string>
     <string name="txt_game_finished">Game is finished!</string>
+    <string name="txt_final_score_title">Final Score</string>
+    <string name="btn_play_again">Play again</string>
+    <string name="txt_final_score">Your final score is :  </string>
+    <string name="tilt_arrow">Direction to tilt device</string>
     <array name="color_list">
         <item>Red</item>
         <item>Blue</item>

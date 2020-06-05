@@ -3,8 +3,8 @@
 
     <solid android:color="@color/white" />
     <size
-        android:width="120dp"
-        android:height="120dp" />
+        android:width="@dimen/count_down_txt_width"
+        android:height="@dimen/count_down_txt_height" />
     <corners
         android:bottomLeftRadius="65dp"
         android:bottomRightRadius="65dp"
