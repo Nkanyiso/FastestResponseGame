@@ -30,7 +30,7 @@
                     android:textColor="@color/white"
                     android:layout_gravity="right|center_vertical"
 
-                    android:layout_marginRight="16dp"
+                    android:layout_marginRight="@dimen/default_margin"
                     />
 
                 />
@@ -40,8 +40,8 @@
 
         <ImageView
             android:id="@+id/arrow"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
+            android:layout_width="@dimen/arrow_width"
+            android:layout_height="@dimen/arrow_height"
             android:src="@drawable/ic_arrow_forward_24dp"
             android:tint="@color/black"
             android:visibility="invisible"

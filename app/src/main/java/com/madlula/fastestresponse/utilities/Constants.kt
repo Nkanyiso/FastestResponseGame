@@ -9,8 +9,6 @@ object Constants {
     const val INTERVAL_MINIMUM_VALUE= 2
     const val INTERVAL_MAX_VALUE= 5
     const val GAME_ROUND_MAX = 10
-    const val MIN_GAME_TILT_WINDOW = 2
-    const val MAX_GAME_TILT_WINDOW = 6
     const val GAME_TILT_DIRECTION_MIN = 0
     const val GAME_TILT_DIRECTION_MAX = 3
     const val GAME_TILT_VARIANT = 50

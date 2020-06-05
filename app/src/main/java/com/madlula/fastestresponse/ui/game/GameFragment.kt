@@ -12,6 +12,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import com.madlula.fastestresponse.R
 import com.madlula.fastestresponse.databinding.FragmentGameBinding
+import com.madlula.fastestresponse.utilities.Constants
 import com.madlula.fastestresponse.utilities.Event
 import com.madlula.fastestresponse.utilities.Utilities
 
@@ -49,14 +50,14 @@ class GameFragment : Fragment() {
             hideAllArrows()
         })
         viewModel.isGameFinished().observe(viewLifecycleOwner, Event.Observer {
-            if(it){
-            gameFinished()
+            if (it) {
+                gameFinished()
             }
         })
-        viewModel.isgameStarted().observe(requireActivity(), Event.Observer {
-            if(it){
-            gameStart()
-        }
+        viewModel.isGameStarted().observe(requireActivity(), Event.Observer {
+            if (it) {
+                gameStart()
+            }
         })
         viewModel.score.observe(viewLifecycleOwner, Observer {
             binding.txtScore.text = "" + it
@@ -64,9 +65,7 @@ class GameFragment : Fragment() {
         startWatchingOrientation();
 
 
-
     }
-
 
 
     override fun onPause() {
@@ -89,7 +88,8 @@ class GameFragment : Fragment() {
         viewModel.waitingToShowArrow = false
 
     }
-    private fun startWatchingOrientation(){
+
+    private fun startWatchingOrientation() {
         mOrientationEventListener = object : OrientationEventListener(requireContext(),
                 SensorManager.SENSOR_DELAY_NORMAL) {
             override fun onOrientationChanged(orientation: Int) {
@@ -105,6 +105,7 @@ class GameFragment : Fragment() {
             mOrientationEventListener.disable()
         }
     }
+
     private fun gameStart() {
 
         hideAllArrows()
@@ -119,8 +120,8 @@ class GameFragment : Fragment() {
 
     private fun showFinalScore() {
         val builder = AlertDialog.Builder(requireContext())
-        builder.setTitle(getString(R.string.txt_final_score_title))
-                .setMessage(getString(R.string.txt_final_score) + viewModel.score.value.toString())
+        builder.setTitle(getString(R.string.txt_final_score_title ))
+                .setMessage(getString(R.string.txt_final_score) + Constants.EMPTY_STRING + viewModel.score.value.toString())
                 .setPositiveButton(getString(R.string.btn_play_again), DialogInterface.OnClickListener { dialog, _ ->
                     dialog.dismiss()
                     viewModel.init()

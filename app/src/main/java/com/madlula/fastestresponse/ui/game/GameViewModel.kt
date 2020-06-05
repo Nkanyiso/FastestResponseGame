@@ -13,9 +13,9 @@ import com.madlula.fastestresponse.utilities.Utilities.getRandomInterval
 class GameViewModel : ViewModel() {
     var chosenColor: MutableLiveData<Int> = MutableLiveData()
     var score: MutableLiveData<Int> = MutableLiveData<Int>()
-    var arrowDirection: MutableLiveData<Event<Float>> = MutableLiveData<Event<Float>>()
+    private var arrowDirection: MutableLiveData<Event<Float>> = MutableLiveData<Event<Float>>()
     var intervalTime: Long = 0L
-    var roundNumber: Int = 0
+    private var roundNumber: Int = 0
     var gameStarted: MutableLiveData<Event<Boolean>> = MutableLiveData<Event<Boolean>>()
     var nextArrow: MutableLiveData<Event<Int>> = MutableLiveData<Event<Int>>()
     var gameFinished: MutableLiveData<Event<Boolean>> = MutableLiveData<Event<Boolean>>()
@@ -39,7 +39,7 @@ class GameViewModel : ViewModel() {
 
     fun getArrowDirection(): LiveData<Event<Float>> = arrowDirection
     fun isGameFinished(): LiveData<Event<Boolean>> = gameFinished
-    fun isgameStarted(): LiveData<Event<Boolean>> = gameStarted
+    fun isGameStarted(): LiveData<Event<Boolean>> = gameStarted
     fun getNextArrow(): LiveData<Event<Int>> = nextArrow
 
 
@@ -91,15 +91,14 @@ class GameViewModel : ViewModel() {
             lastOrientationPosition = orientation
             return;
         } else if (waitingToShowArrow) {
-                score.value = (score.value.toString().toInt() - 1)
-                isTilted = true
+            score.value = (score.value.toString().toInt() - 1)
+            isTilted = true
             lastOrientationPosition = orientation
             return
         } else if (isTilted) {
             lastOrientationPosition = orientation
             return
-        } else if (arrowShown && (orientation - lastOrientationPosition) > 50) {
-
+        } else if (arrowShown) {
             if (arrowDirection.value!!.peek() == Utilities.isAcceptableTilt(lastOrientationPosition, orientation).toFloat()) {
                 score.value = (score.value.toString().toInt() + 1).toInt()
                 isTilted = true
